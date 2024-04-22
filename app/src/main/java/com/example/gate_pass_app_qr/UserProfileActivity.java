@@ -70,6 +70,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
         //Set OnclickLister for the profile picture.
         imageView = findViewById(R.id.imageView_Profile_dp);
+        imageView.setImageResource(R.drawable.no_profile_pic);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override

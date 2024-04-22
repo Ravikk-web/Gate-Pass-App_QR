@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        Objects.requireNonNull(getSupportActionBar()).hide();
+        //Objects.requireNonNull(getSupportActionBar()).hide();
+        getSupportActionBar().hide();
 
         message = findViewById(R.id.textView_MA_head);
         authProfile = FirebaseAuth.getInstance();

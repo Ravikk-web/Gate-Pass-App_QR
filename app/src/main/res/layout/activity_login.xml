@@ -79,26 +79,25 @@
             android:padding="5dp"
             >
 
+            <EditText
+                android:id="@+id/loginPwd"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="20sp" />
+
             <ImageView
                 android:id="@+id/imageViewshow_hide_pwd"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="center"
-                android:padding="10dp"
+                android:padding="2dp"
                 android:background="@drawable/rounded_corner"
-                />
-
-            <EditText
-                android:id="@+id/loginPwd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Password"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="20sp"
-                android:padding="10dp"
-                android:layout_marginStart="10dp"
-                android:inputType="textPassword"
                 />
 
         </LinearLayout>

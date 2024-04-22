@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "316799892277",
+    "project_id": "gate-pass-app-a9367",
+    "storage_bucket": "gate-pass-app-a9367.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316799892277:android:3d34288f573fb40e6caa7c",
+        "android_client_info": {
+          "package_name": "com.example.gate_pass_app_qr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyn4D59NHO67mqSrzfaO5Tcdz6txs-asQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
