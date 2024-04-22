@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_test"
+    tools:context=".UploadProfilePicActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:layout_margin="15dp"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="#E4F1F1F1">
+
+        <TextView
+            android:id="@+id/textView_upload_pic_head"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload Your Profile Picture"
+            android:layout_marginTop="20dp"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            />
+
+        <Button
+            android:id="@+id/upload_pic_choose_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView_upload_pic_head"
+            android:layout_marginTop="20dp"
+            android:text="Choose Picture"
+            android:layout_marginHorizontal="80dp"
+            android:backgroundTint="@color/material_dynamic_neutral_variant60"/>
+
+        <ImageView
+            android:id="@+id/imageView_Profile_dp"
+            android:layout_width="match_parent"
+            android:layout_height="460dp"
+            android:layout_below="@id/upload_pic_choose_button"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/border"/>
+
+        <Button
+            android:id="@+id/upload_pic_upload_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imageView_Profile_dp"
+            android:layout_marginTop="20dp"
+            android:text="UPLOAD"
+            android:layout_marginHorizontal="80dp"
+            android:backgroundTint="@color/material_dynamic_neutral20"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:progressBarStyleLarge"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:elevation="10dp"
+            android:visibility="gone"
+            android:indeterminateTint="#333DFF"
+            />
+
+    </RelativeLayout>
+
+</ScrollView>
