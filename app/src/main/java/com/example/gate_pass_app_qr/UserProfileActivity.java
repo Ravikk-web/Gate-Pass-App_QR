@@ -64,9 +64,9 @@ public class UserProfileActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         //parent details
-        textViewUPParentFullName = findViewById(R.id.textView_show_full_name);
-        textViewUPParentEmail  = findViewById(R.id.textView_show_email);
-        textViewUPParentMobile = findViewById(R.id.textView_show_mobile);
+        textViewUPParentFullName = findViewById(R.id.textView_show_name_parent);
+        textViewUPParentEmail  = findViewById(R.id.textView_show_email_parent);
+        textViewUPParentMobile = findViewById(R.id.textView_show_mobile_parent);
 
         //Set OnclickLister for the profile picture.
         imageView = findViewById(R.id.imageView_Profile_dp);
@@ -231,20 +231,20 @@ public class UserProfileActivity extends AppCompatActivity {
             showLogoutDialog("Logout", "Would you like to Logout.");
         }else if (id == R.id.menu_update_profile){
             startActivity(new Intent(UserProfileActivity.this, UpdateProfileActivity.class));
+        }else if (id == R.id.menu_update_email){
+            startActivity(new Intent(UserProfileActivity.this, UpdateEmailActivity.class));
+        }else if (id == R.id.menu_settings){
+            Toast.makeText(this, "Feature(Biometrics) Work in Progress", Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.menu_change_password){
+            startActivity(new Intent(UserProfileActivity.this, ChangePasswordActivity.class));
+        }else if (id == R.id.menu_delete_profile){
+            startActivity(new Intent(UserProfileActivity.this, DeleteProfileActivity.class));
         }
-//        else if (id == R.id.menu_update_email){
-//            startActivity(new Intent(UserProfileActivity.this, UpdateEmailActivity.class));
-//        }else if (id == R.id.menu_settings){
-//            Toast.makeText(this, "Feature Work in Progress", Toast.LENGTH_SHORT).show();
-//        }else if (id == R.id.menu_change_password){
-//            startActivity(new Intent(UserProfileActivity.this, ChangePasswordActivity.class));
-//        }else if (id == R.id.menu_delete_profile){
-//            startActivity(new Intent(UserProfileActivity.this, DeleteProfileActivity.class));
-//        }
         else {
             Toast.makeText(this, "Something Went Wrong !", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 }

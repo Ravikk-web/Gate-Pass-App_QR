@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "GATE PASS"
+rootProject.name = "GATE-PASS-APP_QR"
 include(":app")
  

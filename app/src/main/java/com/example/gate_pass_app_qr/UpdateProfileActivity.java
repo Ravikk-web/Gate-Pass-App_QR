@@ -86,14 +86,14 @@ public class UpdateProfileActivity extends AppCompatActivity {
         });
 
         //Update Email ***
-//        Button buttonUpdateEmail = findViewById(R.id.button_update_email);
-//        buttonUpdateEmail.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(UpdateProfileActivity.this, UpdateEmailActivity.class));
-//                finish();
-//            }
-//        });
+       Button buttonUpdateEmail = findViewById(R.id.button_update_email);
+        buttonUpdateEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(UpdateProfileActivity.this, UpdateEmailActivity.class));
+                finish();
+            }
+        });
 
         //Setting Up DatePicker on EditText
         editTextUpdateDoB.setOnClickListener(new View.OnClickListener() {
@@ -305,16 +305,18 @@ public class UpdateProfileActivity extends AppCompatActivity {
         }else if (id == R.id.menu_update_profile){
             startActivity(new Intent(UpdateProfileActivity.this, UpdateProfileActivity.class));
             finish();
+        }else if (id == R.id.menu_update_email){
+            startActivity(new Intent(UpdateProfileActivity.this, UpdateEmailActivity.class));
+            finish();
+        }else if (id == R.id.menu_change_password){
+            startActivity(new Intent(UpdateProfileActivity.this, ChangePasswordActivity.class));
+            finish();
+        }else if (id == R.id.menu_settings){
+            Toast.makeText(this, "Feature Work in Progress (Biometrics)", Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.menu_delete_profile){
+            startActivity(new Intent(UpdateProfileActivity.this, DeleteProfileActivity.class));
+            finish();
         }
-//        else if (id == R.id.menu_update_email){
-//            startActivity(new Intent(UploadProfilePicActivity.this, UpdateEmailActivity.class));
-//        }else if (id == R.id.menu_settings){
-//            Toast.makeText(this, "Feature Work in Progress", Toast.LENGTH_SHORT).show();
-//        }else if (id == R.id.menu_change_password){
-//            startActivity(new Intent(UploadProfilePicActivity.this, ChangePasswordActivity.class));
-//        }else if (id == R.id.menu_delete_profile){
-//            startActivity(new Intent(UploadProfilePicActivity.this, DeleteProfileActivity.class));
-//        }
         else {
             Toast.makeText(this, "Something Went Wrong !", Toast.LENGTH_SHORT).show();
         }
