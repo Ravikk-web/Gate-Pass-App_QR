@@ -24,6 +24,9 @@
     <item android:title="Delete Profile"
         android:id="@+id/menu_delete_profile"/>
 
+    <item android:title="GET Pass Token"
+        android:id="@+id/menu_pass_token"/>
+
     <item android:title="Logout"
         android:id="@+id/menu_logout"/>
 </menu>

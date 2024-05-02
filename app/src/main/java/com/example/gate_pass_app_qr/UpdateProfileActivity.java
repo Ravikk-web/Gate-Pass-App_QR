@@ -165,7 +165,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
             ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(textEnrollno,textDoB,textGender,textMobile);
 
             //Extract User reference from Database for "Registered Users"
-            DatabaseReference referenceProfile = FirebaseDatabase.getInstance().getReference("Registered Users");
+            DatabaseReference referenceProfile = FirebaseDatabase.getInstance().getReference("Users").child("student");
 
             String userId = firebaseUser.getUid();
 
@@ -207,7 +207,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         String userIDofRegisteredUser = firebaseUser.getUid();
 
         //Extracting the reference of user from the Database for 'Registered Users'
-        DatabaseReference referenceProfile = FirebaseDatabase.getInstance().getReference("Registered Users");
+        DatabaseReference referenceProfile = FirebaseDatabase.getInstance().getReference("Users").child("student");
 
         progressBar.setVisibility(View.VISIBLE);
 

@@ -16,48 +16,39 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Objects;
 
+public class TeacherActivity extends AppCompatActivity {
     private FirebaseAuth authProfile;
     private TextView message;
-    private ProgressBar progressBar;
-
+    private static final String TAG = "TeacherActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_teacher);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Gate In Charge");
 
-        //Objects.requireNonNull(getSupportActionBar()).hide();
-        getSupportActionBar().hide();
+        message = findViewById(R.id.textViewAdmin);
+        message.setText("Welcome Faculty Member");
 
-        message = findViewById(R.id.textView_MA_head);
         authProfile = FirebaseAuth.getInstance();
 
-        Button loginBtn = findViewById(R.id.btn_MA_login);
-        Button registerBtn = findViewById(R.id.btn_MA_register);
+        Button logout = findViewById(R.id.button_logout);
 
-        loginBtn.setOnClickListener(new View.OnClickListener() {
+        logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        //open register Activity
-        registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                startActivity(intent);
+                Toast.makeText(TeacherActivity.this, "Logout successfull !", Toast.LENGTH_SHORT).show();
+                authProfile.signOut();
+                startActivity(new Intent(TeacherActivity.this, MainActivity.class));
+                finish();
             }
         });
     }
-
 }

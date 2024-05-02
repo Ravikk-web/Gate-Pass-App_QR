@@ -230,7 +230,7 @@ public class DeleteProfileActivity extends AppCompatActivity {
         }
 
         //Delete the data from Realtime Database
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Registered Users");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child("student");
         databaseReference.child(firebaseUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {

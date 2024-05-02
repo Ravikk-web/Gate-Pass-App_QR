@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background"
+    android:gravity="center"
+    android:paddingHorizontal="18dp"
+    android:padding="8dp"
+    tools:context=".TeacherActivity">
+
+    <ImageView
+        android:id="@+id/imageView_login_icon"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_enrollno"
+        />
+
+    <TextView
+        android:id="@+id/textView_LA_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fill The Below information to log In."
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/imageView_login_icon"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:padding="5dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@+id/textView_LA_message"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="12dp"
+        android:padding="20dp"
+        android:background="@drawable/border"
+        android:backgroundTint="#FFFFFF"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Teacher Login"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            />
+        <Button
+            android:id="@+id/button_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logout!"
+            android:layout_marginTop="50dp"
+            />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:progressBarStyleLarge"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:elevation="10dp"
+        android:visibility="gone"
+        android:indeterminateTint="#333DFF"
+        />
+
+</RelativeLayout>

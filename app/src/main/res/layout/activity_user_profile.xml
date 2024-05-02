@@ -223,6 +223,7 @@
                 android:layout_below="@+id/divider_mobile"
                 android:text="Parent Details Below.."
                 android:textSize="18sp"
+                android:textStyle="bold"
                 android:textAlignment="center"
                 android:layout_marginTop="20dp"
                 />

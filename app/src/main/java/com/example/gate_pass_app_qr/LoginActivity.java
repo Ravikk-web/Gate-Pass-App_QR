@@ -30,6 +30,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
@@ -37,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editTextLoginEmail, editTextLoginPwd;
     private ProgressBar progressBar;
     private FirebaseAuth authProfile;
+    private DatabaseReference mDatabase;
     private static final String TAG = "LoginActivity";
 
     @Override
@@ -57,6 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         authProfile = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
         Button buttonForgotPassword = findViewById(R.id.forgot_password);
 
@@ -129,12 +136,12 @@ public class LoginActivity extends AppCompatActivity {
                     //Check if the User has verified the email or not
                     if(firebaseUser.isEmailVerified()){
                         Toast.makeText(LoginActivity.this, "User Login Successfull.", Toast.LENGTH_SHORT).show();
-
-                        //Open user Profile Activity
-                        startActivity(new Intent(LoginActivity.this, UserProfileActivity.class));
+                        //Open Cheeck User's Role
+                        checkUserRole();
 
                     }
                     else {
+                        Toast.makeText(LoginActivity.this, "User not Verified. Please Verify first. A verification email has been send.", Toast.LENGTH_SHORT).show();
                         firebaseUser.sendEmailVerification();
                         authProfile.signOut(); //sign out User
 
@@ -160,6 +167,46 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
                 progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+    private void checkUserRole() {
+
+        final String userID = authProfile.getCurrentUser().getUid();
+        mDatabase.child("admin").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(userID)) {
+                    Toast.makeText(LoginActivity.this, "Logged in as a ADMIN\n(Gate Keeper)", Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(LoginActivity.this, AdminActivity.class));
+                } else {
+                    mDatabase.child("teacher").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild(userID)) {
+                                startActivity(new Intent(LoginActivity.this, TeacherActivity.class));
+                                Toast.makeText(LoginActivity.this, "Logged in as a FACULTY (Class Coordinator)", Toast.LENGTH_LONG).show();
+
+                            } else {
+                                startActivity(new Intent(LoginActivity.this, UserProfileActivity.class));
+                                Toast.makeText(LoginActivity.this, "Logged in as a STUDENT", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(LoginActivity.this, "Error:"+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                            authProfile.signOut();
+                            recreate();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(LoginActivity.this, "Error:"+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -196,10 +243,9 @@ public class LoginActivity extends AppCompatActivity {
 
         if (authProfile.getCurrentUser() !=null)
         {
+            progressBar.setVisibility(View.VISIBLE);
             Toast.makeText(this, "Already logged in !!", Toast.LENGTH_SHORT).show();
-
-            //Start the user Profile Activity
-            startActivity(new Intent(LoginActivity.this, UserProfileActivity.class));
+            checkUserRole();
             finish();
         }
         else {

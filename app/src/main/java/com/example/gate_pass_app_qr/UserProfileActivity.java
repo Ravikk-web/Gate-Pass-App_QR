@@ -157,7 +157,7 @@ public class UserProfileActivity extends AppCompatActivity {
         String userID = firebaseUser.getUid();
 
         //Extracting user reference from the database.
-        DatabaseReference referenceProfile = FirebaseDatabase.getInstance().getReference("Registered Users");
+        DatabaseReference referenceProfile = FirebaseDatabase.getInstance().getReference("Users").child("student");
         referenceProfile.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -239,6 +239,9 @@ public class UserProfileActivity extends AppCompatActivity {
             startActivity(new Intent(UserProfileActivity.this, ChangePasswordActivity.class));
         }else if (id == R.id.menu_delete_profile){
             startActivity(new Intent(UserProfileActivity.this, DeleteProfileActivity.class));
+        }else if (id == R.id.menu_pass_token){
+            //go to generate pass token...
+            recreate();
         }
         else {
             Toast.makeText(this, "Something Went Wrong !", Toast.LENGTH_SHORT).show();
