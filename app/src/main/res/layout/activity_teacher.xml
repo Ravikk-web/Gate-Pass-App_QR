@@ -57,12 +57,55 @@
             android:textColor="@color/black"
             android:textStyle="bold"
             />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AAAAAA"/>
+
+        <EditText
+            android:id="@+id/editText_token_student_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter the name of Student"
+            android:padding="8dp"
+            android:layout_marginTop="12dp"
+            android:background="#DCD9D9"
+            android:textColorHint="@color/black"/>
+
+        <EditText
+            android:id="@+id/editText_token_student_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter the Enrollnment Number of the Student"
+            android:padding="8dp"
+            android:layout_marginTop="12dp"
+            android:background="#DCD9D9"
+            android:textColorHint="@color/black"/>
+
+        <EditText
+            android:id="@+id/editText_token_reason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Your Reason for Gate pass (25 words)"
+            android:padding="8dp"
+            android:layout_marginTop="12dp"
+            android:background="#DCD9D9"
+            android:textColorHint="@color/black"/>
+        <Button
+            android:id="@+id/button_generate_token"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Generate TOKEN"
+            android:layout_marginTop="50dp"
+            />
+
         <Button
             android:id="@+id/button_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Logout!"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="10dp"
             />
 
     </LinearLayout>

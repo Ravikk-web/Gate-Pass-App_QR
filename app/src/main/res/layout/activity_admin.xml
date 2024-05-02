@@ -57,12 +57,32 @@
             android:textColor="@color/black"
             android:textStyle="bold"
             />
+
+        <EditText
+            android:id="@+id/editText_redeem_token"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#E1E1E1"
+            android:hint="Enter your Token here."
+            android:padding="10dp"
+            android:layout_marginTop="20dp"
+            />
+
+        <Button
+            android:id="@+id/button_Redeem_token"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Redeem Token"
+            android:layout_marginTop="50dp"
+            />
+
+
         <Button
             android:id="@+id/button_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Logout!"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="10dp"
             />
 
     </LinearLayout>
