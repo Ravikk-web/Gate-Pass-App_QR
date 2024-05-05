@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -99,6 +100,35 @@ public class TeacherActivity extends AppCompatActivity {
                     //generate and save token to firebase Database.
                     generateAndSaveToken();
                 }
+            }
+        });
+
+        Button buttonShowTokens = findViewById(R.id.button_show_tokens);
+        buttonShowTokens.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                db.collection("passRequests")
+//                        .whereEqualTo("status", "pending") // Filter by pending requests
+//                        .addSnapshotListener((querySnapshot, e) -> {
+//                            if (e != null) {
+//                                Toast.makeText(TeacherActivity.this, "No Pass Available.", Toast.LENGTH_SHORT).show();
+//                                return;
+//                            }
+//
+//                            for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+//                                // Get the request details
+//                                String studentName = doc.getString("studentName");
+//                                String studentId = doc.getString("studentId");
+//                                String requestId = doc.getId();
+//
+//                                // Example: Show a dialog to the teacher with the request details
+//                                Toast.makeText(TeacherActivity.this, studentName+"  => "+studentId+" : "+requestId, Toast.LENGTH_SHORT).show();
+//                                // The teacher can then accept or reject the request
+//                                // Update the status in Firestore based on the teacher's decision
+//                            }
+//                        });
+
+                startActivity(new Intent(TeacherActivity.this, ShowRequestTokensActivity.class));
             }
         });
     }

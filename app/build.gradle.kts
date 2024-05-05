@@ -35,6 +35,10 @@ android {
 dependencies {
 
     implementation ("com.squareup.picasso:picasso:2.8")
+    // Dependency for FirebaseUI for Firestore
+    implementation ("com.firebaseui:firebase-ui-firestore:8.0.0")
+    // Dependency for Firestore
+    implementation ("com.google.firebase:firebase-firestore:23.0.3")
 
     implementation(libs.appcompat)
     implementation(libs.material)

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.circularreveal.CircularRevealRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#BCBCBC"
+    android:padding="16dp"
+    android:id="@+id/main"
+    tools:context=".TokenDetailsActivity">
+
+    <RelativeLayout
+        android:id="@+id/titleBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/rounded_corner"
+        android:padding="3dp"
+        >
+        <TextView
+            android:id="@+id/PageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View/ Edit TOKEN"
+            android:textSize="32sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:padding="5dp"
+            />
+
+        <ImageButton
+            android:id="@+id/saveTokenButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/baseline_add_24"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            app:tint="@color/black"
+            android:backgroundTint="@color/dark_green"
+            android:background="@drawable/rounded_corner"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titleBarLayout"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_margin="26dp"
+        android:backgroundTint="@color/white"
+        android:background="@drawable/rounded_corner">
+
+        <EditText
+        android:id="@+id/studentName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Student Name"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginVertical="8dp"
+        android:padding="12dp"
+        android:textColor="@color/black"/>
+
+        <EditText
+            android:id="@+id/studentId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Student Enrollnment No."
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginVertical="8dp"
+            android:padding="12dp"
+            android:textColor="@color/black"/>
+
+        <EditText
+            android:id="@+id/studentReason"
+            android:layout_width="match_parent"
+            android:layout_height="270dp"
+            android:layout_marginVertical="8dp"
+            android:gravity="top"
+            android:hint="Reason for the Leave..."
+            android:minLines="15"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textView_tokenStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pending"
+            android:layout_marginLeft="12dp"
+            android:textStyle="bold"
+            android:textColor="@color/red"
+            android:background="@drawable/rounded_corner"
+            android:backgroundTint="#232323"
+            android:textAllCaps="true"
+            android:textSize="16sp"
+            android:padding="5dp"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/deleteTokenTextViewBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DELETE TOKEN"
+        android:layout_alignParentBottom="true"
+        android:padding="10dp"
+        android:layout_margin="12dp"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@drawable/border"
+        android:backgroundTint="#D3BF2929"
+
+        />
+
+</com.google.android.material.circularreveal.CircularRevealRelativeLayout>

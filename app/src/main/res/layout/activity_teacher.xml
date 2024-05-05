@@ -97,7 +97,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Generate TOKEN"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="10dp"
+            android:enabled="false"
+            />
+
+        <Button
+            android:id="@+id/button_show_tokens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show TOKENS"
+            android:layout_marginTop="8dp"
             />
 
         <Button

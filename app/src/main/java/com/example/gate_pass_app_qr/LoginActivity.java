@@ -125,6 +125,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     private void loginUser(String email, String pwd) {
+        progressBar.setVisibility(View.VISIBLE);
         authProfile.signInWithEmailAndPassword(email,pwd).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -144,7 +145,6 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "User not Verified. Please Verify first. A verification email has been send.", Toast.LENGTH_SHORT).show();
                         firebaseUser.sendEmailVerification();
                         authProfile.signOut(); //sign out User
-
                         showAlertDialog();
                     }
                 }
@@ -170,35 +170,31 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-    private void checkUserRole() {
 
+    private void checkUserRole() {
         final String userID = authProfile.getCurrentUser().getUid();
+
         mDatabase.child("admin").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(userID)) {
-                    Toast.makeText(LoginActivity.this, "Logged in as a ADMIN\n(Gate Keeper)", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(LoginActivity.this, AdminActivity.class));
+                    handleUserRole("Admin_Gate-Keeper"); // Handle admin role
                 } else {
                     mDatabase.child("teacher").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild(userID)) {
-                                startActivity(new Intent(LoginActivity.this, TeacherActivity.class));
-                                Toast.makeText(LoginActivity.this, "Logged in as a FACULTY (Class Coordinator)", Toast.LENGTH_LONG).show();
-
+                                handleUserRole("Faculty-Teacher"); // Handle teacher role
                             } else {
-                                startActivity(new Intent(LoginActivity.this, UserProfileActivity.class));
-                                Toast.makeText(LoginActivity.this, "Logged in as a STUDENT", Toast.LENGTH_SHORT).show();
+                                handleUserRole("STUDENT"); // Handle student role
                             }
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-                            Toast.makeText(LoginActivity.this, "Error:"+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Error:" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
-                            authProfile.signOut();
-                            recreate();
+                            // Handle error
                         }
                     });
                 }
@@ -206,9 +202,31 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(LoginActivity.this, "Error:"+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Error:" + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                // Handle error
             }
         });
+    }
+
+    private void handleUserRole(String role) {
+        // Handle UI updates based on role (e.g., Toast message, start activity)
+        Toast.makeText(LoginActivity.this, "Logged in as a " + role, Toast.LENGTH_LONG).show();
+
+        //  ... start activity based on role ...
+        if (role=="Admin_Gate-Keeper") {
+            startActivity(new Intent(LoginActivity.this, AdminActivity.class));
+            finish();
+        }else if(role=="Faculty-Teacher"){
+            startActivity(new Intent(LoginActivity.this, TeacherActivity.class));
+            finish();
+        }else if(role=="STUDENT"){
+            startActivity(new Intent(LoginActivity.this, UserProfileActivity.class));
+            finish();
+        }else{
+            Toast.makeText(this, "Something went wrong while redirecting page.", Toast.LENGTH_SHORT).show();
+        }
+        progressBar.setVisibility(View.GONE); // Hide progress bar after handling role
     }
 
     private void showAlertDialog() {
@@ -236,6 +254,13 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    //Extracting checkUserRole() from onStart() allows more control over when to show the progress bar.
+    private void handleUserLogin() {
+        progressBar.setVisibility(View.VISIBLE);
+        checkUserRole();
+    }
+
+
     //check if the user is already logged in or not
     @Override
     protected void onStart() {
@@ -243,10 +268,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (authProfile.getCurrentUser() !=null)
         {
-            progressBar.setVisibility(View.VISIBLE);
             Toast.makeText(this, "Already logged in !!", Toast.LENGTH_SHORT).show();
-            checkUserRole();
-            finish();
+            handleUserLogin();
         }
         else {
             Toast.makeText(this, "You can login Now!", Toast.LENGTH_SHORT).show();

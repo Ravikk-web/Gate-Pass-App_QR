@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:layout_margin="8dp"
+    android:backgroundTint="@color/white"
+    android:background="@drawable/rounded_corner"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        >
+
+        <TextView
+            android:id="@+id/token_studentName_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student Name"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            />
+
+        <TextView
+            android:id="@+id/token_enrollment_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student Enrollnment Number"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:layout_margin="4dp"
+            android:padding="8dp"
+            />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:id="@+id/token_reason_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Student Reason..."
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textSize="16sp"
+        android:layout_margin="4dp"
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:textSize="12sp"
+        android:padding="8dp"
+        android:textStyle="italic"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="#0136D6"
+        android:textColor="@color/white"
+        android:layout_margin="4dp"
+        >
+
+        <TextView
+            android:id="@+id/token_status_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="status"
+            android:gravity="left"
+            android:textColor="@color/red"
+            android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/white"
+            android:layout_marginLeft="8dp"
+            android:padding="5dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/token_timestamp_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date-Time"
+            android:gravity="right"
+            android:textColor="@color/white"
+            android:layout_marginRight="8dp"
+            />
+
+
+    </LinearLayout>
+
+</LinearLayout>

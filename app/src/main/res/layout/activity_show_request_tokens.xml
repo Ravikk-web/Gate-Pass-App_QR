@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.circularreveal.CircularRevealRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ShowRequestTokensActivity"
+    android:padding="16dp"
+    android:screenOrientation="portrait"
+    android:background="#e1e1e1"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+
+    <RelativeLayout
+        android:id="@+id/titleBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="#FFFFFF"
+        android:gravity="center"
+        >
+        <TextView
+            android:id="@+id/PageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Requests"
+            android:paddingLeft="28sp"
+            android:textSize="38sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            />
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/titleBarLayout"
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/accept_request_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="26dp"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/no_profile_pic" />
+
+
+</com.google.android.material.circularreveal.CircularRevealRelativeLayout>
