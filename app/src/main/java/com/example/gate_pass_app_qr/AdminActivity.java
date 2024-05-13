@@ -2,9 +2,12 @@ package com.example.gate_pass_app_qr;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,28 +18,34 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class AdminActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseAuth authProfile;
-    private TextView message;
+    private TextView message, textViewOR;
     private EditText editTextRedeemToken;
-    private FirebaseFirestore db;
+    private Button btnEnterToken, btnScanQR;
+    private LinearLayout linearLayoutFillToken;
     private static final String TAG = "LoginActivity";
 
     @Override
@@ -55,9 +64,12 @@ public class AdminActivity extends AppCompatActivity {
         message = findViewById(R.id.textViewAdmin);
         message.setText("Welcome Gate-Keeper");
         editTextRedeemToken = findViewById(R.id.editText_redeem_token);
+        btnEnterToken = findViewById(R.id.button_enter_token);
+        btnScanQR = findViewById(R.id.button_scan_qr_code);
+        linearLayoutFillToken = findViewById(R.id.linearlayout_fill_token);
+        textViewOR = findViewById(R.id.textView_or);
 
         authProfile = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         Button logout = findViewById(R.id.button_logout);
         logout.setOnClickListener(new View.OnClickListener() {
@@ -70,49 +82,55 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
+        //Enter Token Button Action
+        btnEnterToken.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnEnterToken.setVisibility(View.GONE);
+                linearLayoutFillToken.setVisibility(View.VISIBLE);
+                textViewOR.setVisibility(View.GONE);
+            }
+        });
+
+        //Enter scanQR Button Action
+        btnScanQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnEnterToken.setVisibility(View.VISIBLE);
+                linearLayoutFillToken.setVisibility(View.GONE);
+                textViewOR.setVisibility(View.VISIBLE);
+
+                startActivity(new Intent(AdminActivity.this, ScanQRCodeActivity.class));
+            }
+        });
+
         Button buttonRedeemToken = findViewById(R.id.button_Redeem_token);
         buttonRedeemToken.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String token = editTextRedeemToken.getText().toString();
-                redeemToken(token);
+                String encodedtoken = editTextRedeemToken.getText().toString();
+                //Decrypt the Token
+                if (TextUtils.isEmpty(encodedtoken)){
+                    editTextRedeemToken.setError("Please Enter the TOKEN to Redeem.");
+                    editTextRedeemToken.requestFocus();
+                } else if (encodedtoken.length() < 74 || encodedtoken.length() > 80) {
+                    editTextRedeemToken.setError("Please Enter a Valid Pass Token");
+                    editTextRedeemToken.requestFocus();
+                } else{
+
+                String[] tokenData = dataUtils.decodeAndSeparate(encodedtoken);
+                String token = tokenData[0];
+                String DocId = tokenData[1];
+
+                Intent intent = new Intent(AdminActivity.this, onScanQRCodeSuccessActivity.class);
+                intent.putExtra("token",token);
+                intent.putExtra("docId",DocId);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                }
+
             }
         });
     }
 
-    private void redeemToken(String token) {
-
-        // Check if the token exists and is not redeemed
-        db.collection("tokens").whereEqualTo("token", token)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            DocumentSnapshot tokenDoc = queryDocumentSnapshots.getDocuments().get(0);
-                            Boolean redeemed = tokenDoc.getBoolean("redeemed");
-                            if (redeemed != null && !redeemed) {
-                                // Mark the token as redeemed
-                                tokenDoc.getReference().update("redeemed", true,
-                                        "redeemedBy", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                // Handle token redemption logic here
-                                Toast.makeText(AdminActivity.this, "Token Redeemed Successfully.", Toast.LENGTH_SHORT).show();
-                            } else {
-                                // Token is already redeemed
-                                Toast.makeText(AdminActivity.this, "Token is Already Redeemed.", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            // Token does not exist
-                            Toast.makeText(AdminActivity.this, "Token does Not Exist.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle error
-                        Toast.makeText(AdminActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
 }

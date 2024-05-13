@@ -22,17 +22,18 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
 
-public class tokenAdapter extends FirestoreRecyclerAdapter<Token, tokenAdapter.tokenViewHolder> {
+public class tokenAdapter extends FirestoreRecyclerAdapter<TokenDetails, tokenAdapter.tokenViewHolder> {
 
     Context context;
 
-    public tokenAdapter(@NonNull FirestoreRecyclerOptions<Token> options, Context context) {
+    public tokenAdapter(@NonNull FirestoreRecyclerOptions<TokenDetails> options, Context context) {
         super(options);
         this.context = context;
     }
 
+
     @Override
-    protected void onBindViewHolder(@NonNull tokenViewHolder holder, int position, @NonNull Token token) {
+    protected void onBindViewHolder(@NonNull tokenViewHolder holder, int position, @NonNull TokenDetails token) {
         holder.studentNameTextView.setText(token.studentName);
         holder.studentIdTextView.setText(token.studentId);
         holder.studentReasonTextView.setText(token.studentReason);
@@ -48,6 +49,8 @@ public class tokenAdapter extends FirestoreRecyclerAdapter<Token, tokenAdapter.t
             intent.putExtra("status",token.tokenStatus);
             String docId = this.getSnapshots().getSnapshot(position).getId();
             intent.putExtra("docId",docId);
+            intent.putExtra("passRequestUserId", token.passRequestUserId);
+            intent.putExtra("passRequestDocId", token.PassRequestUserDocId);
             context.startActivity(intent);
         });
     }

@@ -39,6 +39,11 @@ dependencies {
     implementation ("com.firebaseui:firebase-ui-firestore:8.0.0")
     // Dependency for Firestore
     implementation ("com.google.firebase:firebase-firestore:23.0.3")
+    //Dependancy for QR feature
+    implementation("com.github.androidmads:QRGenerator:1.0.1")
+    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+    implementation("eu.livotov.labs.android:CAMView:2.0.1@aar") {setTransitive(true)}
 
     implementation(libs.appcompat)
     implementation(libs.material)

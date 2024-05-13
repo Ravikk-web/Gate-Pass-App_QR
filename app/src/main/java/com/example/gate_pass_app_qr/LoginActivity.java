@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -40,6 +41,7 @@ import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText editTextLoginEmail, editTextLoginPwd;
+    private TextView textView_LA_message;
     private ProgressBar progressBar;
     private FirebaseAuth authProfile;
     private DatabaseReference mDatabase;
@@ -60,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
 
         editTextLoginEmail = findViewById(R.id.loginEmail);
         editTextLoginPwd = findViewById(R.id.loginPwd);
+        textView_LA_message = findViewById(R.id.textView_LA_message_head);
         progressBar = findViewById(R.id.progressBar);
 
         authProfile = FirebaseAuth.getInstance();
@@ -211,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleUserRole(String role) {
         // Handle UI updates based on role (e.g., Toast message, start activity)
-        Toast.makeText(LoginActivity.this, "Logged in as a " + role, Toast.LENGTH_LONG).show();
+        Toast.makeText(LoginActivity.this, "Logged in as a " + role, Toast.LENGTH_SHORT).show();
 
         //  ... start activity based on role ...
         if (role=="Admin_Gate-Keeper") {
@@ -268,7 +271,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (authProfile.getCurrentUser() !=null)
         {
-            Toast.makeText(this, "Already logged in !!", Toast.LENGTH_SHORT).show();
+            textView_LA_message.setText("Already logged in !!");
             handleUserLogin();
         }
         else {

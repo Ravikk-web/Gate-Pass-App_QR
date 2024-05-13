@@ -236,7 +236,6 @@ public class UserProfileActivity extends AppCompatActivity {
         }else if (id == R.id.menu_settings){
             Toast.makeText(this, "Feature(Biometrics) Work in Progress", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.menu_pass_token){
-            Toast.makeText(this, "Request Gate Pass.", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(UserProfileActivity.this, RequestGatePassTokenActivity.class));
         }else if (id == R.id.menu_change_password){
             startActivity(new Intent(UserProfileActivity.this, ChangePasswordActivity.class));

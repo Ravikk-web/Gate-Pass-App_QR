@@ -12,7 +12,7 @@
         android:id="@+id/textView_requestGPT_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="30dp"
         android:text="Request for Gate Pass"
         android:textAlignment="center"
         android:padding="10dp"
@@ -73,6 +73,37 @@
         app:layout_constraintTop_toBottomOf="@+id/textView_show_student_id"
         tools:layout_editor_absoluteX="28dp" />
 
+    <TextView
+        android:id="@+id/editText_get_student_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="@color/white"
+        android:padding="6dp"
+        android:text="DATE/"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_get_student_reason"
+        app:layout_constraintVertical_bias="0.052" />
+
+    <TextView
+        android:id="@+id/editText_get_student_token_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/red"
+        android:padding="6dp"
+        android:text="DATE/"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_get_student_reason"
+        app:layout_constraintVertical_bias="0.052" />
+
     <Button
         android:id="@+id/button_requestGPT"
         android:layout_width="wrap_content"
@@ -81,7 +112,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_get_student_reason" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_get_student_reason"
+        app:layout_constraintVertical_bias="0.459" />
+
+    <Button
+        android:id="@+id/button_deleteGPT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Revoke"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_requestGPT" />
 
     <ProgressBar
         android:id="@+id/progressBar"

@@ -240,6 +240,7 @@ public class RegisterActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 Toast.makeText(RegisterActivity.this, "Email Verification has been send to your email", Toast.LENGTH_SHORT).show();
+
                                             }
                                         });
 
@@ -257,9 +258,11 @@ public class RegisterActivity extends AppCompatActivity {
                                     }
                                     //Hide progressBar whether the user is creation is successfully or not.
                                     progressBar.setVisibility(View.GONE);
+
                                 }
                             });
                         }
+
                     }
                 });
             }

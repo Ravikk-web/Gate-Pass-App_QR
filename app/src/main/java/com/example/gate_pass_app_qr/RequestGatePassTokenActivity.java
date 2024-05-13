@@ -1,8 +1,10 @@
 package com.example.gate_pass_app_qr;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,20 +31,25 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RequestGatePassTokenActivity extends AppCompatActivity {
-
     private FirebaseAuth authProfile;
-    private Button buttonRequestPass;
-    private TextView textViewShowStudentName, textViewShowStudentEnrollNo;
+    private Button buttonRequestPass, buttonRevokePass;
+    private TextView textViewShowStudentName, textViewShowStudentEnrollNo, textViewShowStudentTimeStamp, textViewShowStudentTokenStatus;
     private EditText editTextGetStudentReason;
-    private String studentName, studentId, studentReason, tokenStatus, docId;
+    private String studentReason, tokenStatus, docId, timeStamp;
+    private static String TokenDetailsDocId =null, TokenDetailsUserId=null, studentName, studentId;
+    static String parentEmail;
+    private static String parentMobile;
+    private FirebaseFirestore db;
     Timestamp currentTimestamp = Timestamp.now();
     private ProgressBar progressBar;
 
@@ -59,27 +65,43 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
         });
 
         authProfile = FirebaseAuth.getInstance();
+        TokenDetailsUserId = authProfile.getCurrentUser().getUid();
 
         textViewShowStudentName = findViewById(R.id.textView_show_student_name);
         textViewShowStudentEnrollNo = findViewById(R.id.textView_show_student_id);
         editTextGetStudentReason = findViewById(R.id.editText_get_student_reason);
+        textViewShowStudentTimeStamp = findViewById(R.id.editText_get_student_timestamp);
+        textViewShowStudentTokenStatus = findViewById(R.id.editText_get_student_token_status);
 
         progressBar = findViewById(R.id.progressBar);
         buttonRequestPass = findViewById(R.id.button_requestGPT);
+        buttonRevokePass = findViewById(R.id.button_deleteGPT);
         FirebaseUser firebaseUser = authProfile.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+
+        buttonRequestPass.setEnabled(false);
+        editTextGetStudentReason.setEnabled(false);
+        textViewShowStudentTimeStamp.setVisibility(View.VISIBLE);
+        textViewShowStudentTokenStatus.setVisibility(View.VISIBLE);
+
 
         //getting the details from the server
-        if (authProfile.getCurrentUser() !=null)
-        {
+        if (authProfile.getCurrentUser() != null) {
             progressBar.setVisibility(View.VISIBLE);
+
+            //Set the Student name and ID
             getStudentNameAndEnroll(firebaseUser);
-        }
-        else {
+            //Check if the Document is available or not
+            checkAvailableDocument();
+
+        } else {
             Toast.makeText(this, "Error getting Details.", Toast.LENGTH_SHORT).show();
         }
 
-//        Query query =  utility.getCollectionRefereneceForTokens().orderBy("timestamp", Query.Direction.DESCENDING);
-//        FirestoreRecyclerOptions<Token> options = new FirestoreRecyclerOptions.Builder<Token>().setQuery(query, Token.class).build();
+        Query query =  utility.getCollectionRefereneceForTokens().orderBy("timestamp", Query.Direction.DESCENDING);
+        FirestoreRecyclerOptions<Token> options = new FirestoreRecyclerOptions.Builder<Token>().setQuery(query, Token.class).build();
+
+        //request Button
         buttonRequestPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,20 +111,142 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
             }
         });
 
+        buttonRevokePass.setOnClickListener((v)->showAlertDialog());
     }
 
-    void saveToken(){
+    private void checkIfApproved(String uid) {
+        FirebaseFirestore.getInstance().collection("tokens").whereEqualTo("passRequestUserId", uid)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DocumentReference documentRef = document.getReference();
+                                String documentId = documentRef.getId();
+                                String token = document.getString("token");
+
+                                // Create a hash map to update the document
+                                Map<String, Object> updateData = new HashMap<>();
+                                updateData.put("parentEmail", parentEmail); // Replace with the actual email address
+                                updateData.put("parentMobile", parentMobile); // Replace with the actual email address
+
+                                // Update the document with the new field
+                                documentRef.update(updateData)
+                                        .addOnSuccessListener(aVoid -> {
+                                            // Successfully updated the document
+                                            sendDataForQR(token, documentId);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            // Handle update failure
+                                            Log.e("Firestore Error", "Error updating document: " + e.getMessage());
+                                            Toast.makeText(RequestGatePassTokenActivity.this, "Failed to update Parent Email.", Toast.LENGTH_SHORT).show();
+                                        });
+                            }
+
+                        } else {
+                            Log.w("Fire Store Error", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    private void saveTokenDetials(Token token, String DocumentId) {
+
+        //[TokenDetailsUserId] get the token's user id.
+        TokenDetailsDocId = DocumentId;
+
+
+        TokenDetails tokenDetails = new TokenDetails();
+
+        tokenDetails.setStudentName(token.getStudentName());
+        tokenDetails.setStudentId(token.getStudentId());
+        tokenDetails.setStudentReason(token.getStudentReason());
+        tokenDetails.setTokenStatus(token.getTokenStatus());
+        tokenDetails.setTimestamp(token.getTimestamp());
+        tokenDetails.setPassRequestUserId(TokenDetailsUserId);
+
+        tokenDetails.setPassRequestUserDocId(TokenDetailsDocId);
+
+        //Save the token to firebase:
+        saveTokenDetailsToFirebase(tokenDetails);
+    }
+
+    private void checkAvailableDocument() {
+
+        Task<QuerySnapshot> task= utility.getCollectionRefereneceForTokens().get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    QuerySnapshot snapshot = task.getResult();
+                    if (snapshot != null && snapshot.isEmpty()) {
+                        // No documents found in the collection
+                        Toast.makeText(RequestGatePassTokenActivity.this, "Please fill the 'reason' field.", Toast.LENGTH_SHORT).show();
+                        editTextGetStudentReason.requestFocus();
+                        buttonRequestPass.setEnabled(true);
+                        editTextGetStudentReason.setEnabled(true);
+                        textViewShowStudentTimeStamp.setVisibility(View.GONE);
+                        textViewShowStudentTokenStatus.setVisibility(View.GONE);
+                        buttonRevokePass.setVisibility(View.GONE);
+
+                    } else {
+                        // Documents exist in the collection
+                        String tokenStatus = null;
+
+                        for (DocumentSnapshot doc : snapshot) {
+                            // Perform actions based on the data (e.g., display in a list)
+
+                            //STATIC VARIABLES
+                            studentName = doc.getString("studentName");
+                            studentId = doc.getString("studentId");
+
+                            studentReason = doc.getString("studentReason");
+                            tokenStatus = doc.getString("tokenStatus");
+                            timeStamp = utility.timeStampToString(doc.getTimestamp("timestamp"));
+                            docId = doc.getId();
+                            TokenDetailsDocId = doc.getId();
+
+                            editTextGetStudentReason.setText(studentReason);
+                            textViewShowStudentTimeStamp.setText(timeStamp);
+
+                            textViewShowStudentTokenStatus.setText(tokenStatus);
+
+                        }
+                        Toast.makeText(RequestGatePassTokenActivity.this, "Token already Available for the User.", Toast.LENGTH_SHORT).show();
+
+                        if (tokenStatus != null && tokenStatus.equals("approved")){
+                            checkIfApproved(authProfile.getCurrentUser().getUid());
+                        }
+
+                    }
+                } else {
+                    Toast.makeText(RequestGatePassTokenActivity.this, "Error getting documents: ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    private void sendDataForQR(String token,String documentId) {
+        String data = dataUtils.combineAndEncode(token, documentId);
+        Intent intent = new Intent(RequestGatePassTokenActivity.this,GenerateQRCodeActivity.class);
+        intent.putExtra("data",data);
+        RequestGatePassTokenActivity.this.startActivity(intent);
+        finish();
+    }
+
+
+    void saveToken() {
 
         Token token = new Token();
         studentName = textViewShowStudentName.getText().toString();
-        studentId =  textViewShowStudentEnrollNo.getText().toString();
+        studentId = textViewShowStudentEnrollNo.getText().toString();
         studentReason = editTextGetStudentReason.getText().toString();
         tokenStatus = "pending";
         docId = null;
 
-        //Toast.makeText(this, "Save Token -> TokenStatus: "+tokenStatus, Toast.LENGTH_SHORT).show();
 
-        if(studentReason == null || studentReason.isEmpty()){
+        if (studentReason == null || studentReason.isEmpty()) {
             editTextGetStudentReason.setError("A valid Reason is Required !!");
             editTextGetStudentReason.requestFocus();
             progressBar.setVisibility(View.GONE);
@@ -113,37 +257,61 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
         token.setStudentId(studentId);
         token.setStudentReason(studentReason);
         token.setTokenStatus(tokenStatus);
-
         token.setTimestamp(currentTimestamp);
 
         saveNoteToFirebase(token);
     }
 
-    void saveNoteToFirebase(Token token){
+    void saveNoteToFirebase(Token token) {
         DocumentReference documentReference;
         documentReference = utility.getCollectionRefereneceForTokens().document();
         documentReference.set(token).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
+                    String documentId = documentReference.getId(); // Get document ID
+
                     //Notes is added
-                    utility.showToast(RequestGatePassTokenActivity.this,"Pass Applied Successfully.");
+                    utility.showToast(RequestGatePassTokenActivity.this, "Pass Applied Successfully.");
+
+                    // ... (rest of your success logic)
+                    saveTokenDetials(token, documentId);
                     progressBar.setVisibility(View.GONE);
                     finish();
-                }else{
+                } else {
                     //note is not added
-                    utility.showToast(RequestGatePassTokenActivity.this,"Failed while applying pass !");
+                    utility.showToast(RequestGatePassTokenActivity.this, "Failed while applying pass !");
+                }
+
+            }
+        });
+
+        //This Method saved another collection of the token details.
+        //progressBar.setVisibility(View.GONE);
+    }
+    void saveTokenDetailsToFirebase(TokenDetails token) {
+        DocumentReference documentReference;
+        documentReference = utility.getCollectionRefereneceForTokensDetails().document();
+        documentReference.set(token).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //Notes is added
+                    utility.showToast(RequestGatePassTokenActivity.this, "Token Details saved Successfully.");
+                    progressBar.setVisibility(View.GONE);
+                    finish();
+                } else {
+                    //note is not added
+                    utility.showToast(RequestGatePassTokenActivity.this, "Failed while saving Token Details !");
                 }
             }
         });
+
+        //This Method saved another collection of the token details.
         progressBar.setVisibility(View.GONE);
     }
 
-    private void setNameAndIdToTextView(String studentName, String StudentId){
-        //setting the details in the textView
-            textViewShowStudentName.setText(studentName);
-            textViewShowStudentEnrollNo.setText(StudentId);
-    }
+
     private void getStudentNameAndEnroll(FirebaseUser firebaseUser) {
         String userID = firebaseUser.getUid();
         //Extracting user reference from the database.
@@ -152,11 +320,16 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ReadWriteUserDetails readUserDetails = snapshot.getValue(ReadWriteUserDetails.class);
-                if(readUserDetails != null){
+                if (readUserDetails != null) {
                     studentName = firebaseUser.getDisplayName();
                     studentId = readUserDetails.enrollno;
-                    setNameAndIdToTextView(studentName, studentId);
-                }else {
+
+                    RequestGatePassTokenActivity.parentEmail = readUserDetails.parentEmail;
+                    RequestGatePassTokenActivity.parentMobile = readUserDetails.parentMobile;
+
+                    textViewShowStudentName.setText(studentName);
+                    textViewShowStudentEnrollNo.setText(studentId);
+                } else {
                     Toast.makeText(RequestGatePassTokenActivity.this, "Something Went WRONG !", Toast.LENGTH_SHORT).show();
                 }
                 progressBar.setVisibility(View.GONE);
@@ -170,14 +343,72 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
         });
     }
 
-//    private void createNewToken(FirebaseUser firebaseUser) {
-//
-//        //Getting document reference from the firestrore dtabase
-//        DocumentReference documentReference;
-//
-//        documentReference = utility.getCollectionRefereneceForTokens().document(docId);
-//        Token token1 = new Token();
-//        token1.setTokenStatus("pending");
-//
-//    }
+    private void showAlertDialog() {
+        // Setup the Alert Builder
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(RequestGatePassTokenActivity.this);
+        builder.setTitle("REVOKE PASS");
+        builder.setMessage("Do You really want to Revoke your Pass. Once Revoked, your pass will be deleted from Query.");
+
+        //open the email app if user clidks/ taps continue button
+        builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteTokenFromFirebase();
+            }
+        });
+        //Create the alert Dialog box
+        AlertDialog alertDialog = builder.create();
+
+        //Show the Alert box
+        alertDialog.show();
+    }
+
+    void deleteTokenFromFirebase(){
+        DocumentReference documentReference;
+        documentReference = utility.getCollectionRefereneceForTokens().document(docId);
+
+        documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    //Note is deleted
+                    deleteTokenDetailsFromFirebase(docId);
+                    utility.showToast(RequestGatePassTokenActivity.this,"Token Revoked Succesfully");
+                    finish();
+                }else{
+                    //note is not added
+                    utility.showToast(RequestGatePassTokenActivity.this,"Failed to revoke Token!");
+                }
+            }
+        });
+    }
+
+    void deleteTokenDetailsFromFirebase(String docId){
+        utility.getDocumentReferencesToDeleteTokens(docId, new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        DocumentReference documentRef = document.getReference();
+                        documentRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    //Note is deleted
+                                    utility.showToast(RequestGatePassTokenActivity.this,"Token Deleted.");
+                                    finish();
+                                }else{
+                                    //note is not added
+                                    utility.showToast(RequestGatePassTokenActivity.this,"Failed to delete Token");
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    Log.w("Firestore Error", "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
 }

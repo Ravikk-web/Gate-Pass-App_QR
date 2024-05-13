@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#070247"
+    android:gravity="center"
+    tools:context=".GenerateQRCodeActivity">
+
+    <FrameLayout
+        android:id="@+id/framelayout_qrCode"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+       >
+
+        <TextView
+            android:id="@+id/textView_generate_qrCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Your Code will Apear here.."
+            android:textAllCaps="false"
+            android:textAlignment="center"
+            android:elevation="1dp"
+            android:padding="4dp"
+            android:textSize="15sp"/>
+
+        <ImageView
+            android:id="@+id/imageView_generate_qrCode"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:background="@color/white"
+            />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/framelayout_qrCode"
+        android:padding="20dp"
+        >
+
+        <TextView
+            android:id="@+id/textView_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Your ID here"
+            android:textStyle="bold"
+            android:textSize="22sp"
+            android:padding="12dp"
+            android:textColor="@color/white"
+            android:background="@drawable/rounded_corner"
+            android:backgroundTint="#45E1E1E1"
+            />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
