@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -20,9 +21,12 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -38,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
+import java.util.concurrent.Executor;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText editTextLoginEmail, editTextLoginPwd;
@@ -45,6 +50,8 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseAuth authProfile;
     private DatabaseReference mDatabase;
+    BiometricPrompt biometricPrompt;
+    BiometricPrompt.PromptInfo promptInfo;
     private static final String TAG = "LoginActivity";
 
     @Override
@@ -67,6 +74,54 @@ public class LoginActivity extends AppCompatActivity {
 
         authProfile = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        //setup biometric properties
+        BiometricManager biometricManager = BiometricManager.from(this);
+        switch (biometricManager.canAuthenticate()){
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                Toast.makeText(this, "Device doesn't have FinerPrint support.", Toast.LENGTH_SHORT).show();
+                break;
+
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                Toast.makeText(this, "Not Working", Toast.LENGTH_SHORT).show();
+
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                Toast.makeText(this, "No FingerPrint Assigned", Toast.LENGTH_SHORT).show();
+        }
+
+        Executor executor = ContextCompat.getMainExecutor((this));
+
+        biometricPrompt = new BiometricPrompt(LoginActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+                Toast.makeText(LoginActivity.this, "Authentication Error: "+errString, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+
+                progressBar.setVisibility(View.VISIBLE);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleUserLogin();
+                    }
+                },1600);
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+                Toast.makeText(LoginActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        //End of Biometric properties
+
 
         Button buttonForgotPassword = findViewById(R.id.forgot_password);
 
@@ -263,6 +318,7 @@ public class LoginActivity extends AppCompatActivity {
         checkUserRole();
     }
 
+    //if user Already logged in use biometric to authenticate
 
     //check if the user is already logged in or not
     @Override
@@ -272,7 +328,12 @@ public class LoginActivity extends AppCompatActivity {
         if (authProfile.getCurrentUser() !=null)
         {
             textView_LA_message.setText("Already logged in !!");
-            handleUserLogin();
+//            handleUserLogin();
+
+            promptInfo = new BiometricPrompt.PromptInfo.Builder().setTitle("Swift Exit")
+                    .setDescription("Already Logged in. Use FingerPrint to Login into your account.").setDeviceCredentialAllowed(true).build();
+
+            biometricPrompt.authenticate(promptInfo);
         }
         else {
             Toast.makeText(this, "You can login Now!", Toast.LENGTH_SHORT).show();

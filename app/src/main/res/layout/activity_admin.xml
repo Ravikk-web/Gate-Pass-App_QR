@@ -17,7 +17,7 @@
         android:layout_height="160dp"
         android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/icon_account_circle"
+        android:src="@drawable/logo_gpa_no_bg"
         />
 
     <TextView

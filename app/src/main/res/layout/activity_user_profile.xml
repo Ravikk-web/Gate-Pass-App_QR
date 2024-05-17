@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UserProfileActivity"
-    android:background="@drawable/gradient_color_1">\
+    android:background="@drawable/bg">\
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:background="#5CC09F">
+            android:background="#4026B8">
 
             <ImageView
                 android:id="@+id/imageView_Profile_dp"
@@ -43,7 +43,7 @@
             android:layout_height="match_parent"
             android:padding="15dp"
             android:layout_margin="15dp"
-            android:background="@color/white">
+            android:background="#B5FFFFFF">
 
             <!--            Full name-->
             <ImageView

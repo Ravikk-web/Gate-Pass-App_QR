@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_test"
+    android:background="@drawable/bg"
     android:padding="15dp"
     tools:context=".MainActivity">
 
@@ -16,7 +16,7 @@
         android:text="HELLO"
         android:textSize="70sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="100dp"
@@ -27,14 +27,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textView_MA_head"
-        android:text="WELCOME TO THE GATE PASS APP"
+        android:text="WELCOME TO\n  SWIFT EXIT"
         android:padding="4dp"
         android:textSize="16sp"
-        android:textColor="#292929"
+        android:textColor="@color/white"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="2dp"
         />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="137dp"
+        android:layout_height="133dp"
+
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="253dp"
+        android:layout_marginTop="82dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginBottom="661dp"
+        app:srcCompat="@drawable/logo_gpa_no_bg" />
 
     <Button
         android:id="@+id/btn_MA_login"
@@ -59,12 +74,10 @@
         android:padding="12dp"
         android:text="REGISTER"
         android:layout_marginHorizontal="30dp"
-        android:backgroundTint="#E9FFFFFF"
+        android:backgroundTint="#E9EAEAEA"
         android:textColor="@color/black"
         android:textSize="18sp"
         />
-
-
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -76,6 +89,7 @@
         android:visibility="gone"
         android:indeterminateTint="#2470F3"
         />
+
 
 
 

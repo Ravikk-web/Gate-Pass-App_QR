@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GATE PASS</string>
+    <string name="app_name">Swift Exit</string>
 
     <string-array name="admin_login_options">
         <item>Class Coordinator</item>

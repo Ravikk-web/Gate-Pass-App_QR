@@ -1,5 +1,7 @@
 package com.example.gate_pass_app_qr;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -38,8 +40,6 @@ public class TeacherActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private FirebaseFirestore db;
     private TextView message;
-    private EditText editTextTokenReason, editTextTokenStudentName, editTextTokenStudentId;
-    private String tokenReason, studentName, studentId;
     private static final String TAG = "TeacherActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +56,6 @@ public class TeacherActivity extends AppCompatActivity {
         message = findViewById(R.id.textViewAdmin);
         message.setText("Welcome Faculty Member");
 
-        editTextTokenReason = findViewById(R.id.editText_token_reason);
-        editTextTokenStudentName = findViewById(R.id.editText_token_student_name);
-        editTextTokenStudentId = findViewById(R.id.editText_token_student_id);
-
 
         authProfile = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -69,104 +65,48 @@ public class TeacherActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(TeacherActivity.this, "Logout successfull !", Toast.LENGTH_SHORT).show();
-                authProfile.signOut();
-                startActivity(new Intent(TeacherActivity.this, MainActivity.class));
-                finish();
+                showLogoutDialog("Logout", "Would you like to Logout.");
             }
         });
 
         // Generate token button click listener
-        Button generateToken = findViewById(R.id.button_generate_token);
-        generateToken.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tokenReason = editTextTokenReason.getText().toString();
-                studentName = editTextTokenStudentName.getText().toString();
-                studentId = editTextTokenStudentId.getText().toString();
-
-                if(TextUtils.isEmpty(tokenReason)){
-                    editTextTokenReason.setError("Reason is Required.");
-                    editTextTokenReason.requestFocus();
-                }else if (TextUtils.isEmpty(studentName)){
-                    editTextTokenStudentName.setError("This Field is Required. Enter Student's name.");
-                    editTextTokenStudentName.requestFocus();
-                }else if (TextUtils.isEmpty(studentId)){
-                    editTextTokenStudentId.setError("This Field is Required. Enter Student's Enrollment Number.");
-                    editTextTokenStudentId.requestFocus();
-                }else{
-                    // create a progress bar.
-
-                    //generate and save token to firebase Database.
-                    generateAndSaveToken();
-                }
-            }
-        });
 
         Button buttonShowTokens = findViewById(R.id.button_show_tokens);
         buttonShowTokens.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                db.collection("passRequests")
-//                        .whereEqualTo("status", "pending") // Filter by pending requests
-//                        .addSnapshotListener((querySnapshot, e) -> {
-//                            if (e != null) {
-//                                Toast.makeText(TeacherActivity.this, "No Pass Available.", Toast.LENGTH_SHORT).show();
-//                                return;
-//                            }
-//
-//                            for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-//                                // Get the request details
-//                                String studentName = doc.getString("studentName");
-//                                String studentId = doc.getString("studentId");
-//                                String requestId = doc.getId();
-//
-//                                // Example: Show a dialog to the teacher with the request details
-//                                Toast.makeText(TeacherActivity.this, studentName+"  => "+studentId+" : "+requestId, Toast.LENGTH_SHORT).show();
-//                                // The teacher can then accept or reject the request
-//                                // Update the status in Firestore based on the teacher's decision
-//                            }
-//                        });
-
                 startActivity(new Intent(TeacherActivity.this, ShowRequestTokensActivity.class));
             }
         });
     }
 
-    private void generateAndSaveToken() {
-        // Generate a unique token
-        String token = generateUniqueToken();
+    private void showLogoutDialog(String title, String message) {
+        // Setup the Alert Builder
 
-        //String teacherId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        AlertDialog.Builder builder = new AlertDialog.Builder(TeacherActivity.this);
+        builder.setTitle(title.toUpperCase());
+        builder.setMessage(message);
 
-        // Save the token to Firebase
-        Map<String, Object> tokenData = new HashMap<>();
-        tokenData.put("token", token);
-        tokenData.put("studentId", studentId);
-        tokenData.put("studentName", studentName);
-        tokenData.put("createdAt", System.currentTimeMillis());
-        tokenData.put("redeemed", false);
+        //open the email app if user clicks/ taps continue button
+        builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                authProfile.signOut();
+                Toast.makeText(TeacherActivity.this, "logout Successful !", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(TeacherActivity.this, MainActivity.class);
 
-        db.collection("tokens").add(tokenData)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        // Token saved successfully
-                        Toast.makeText(TeacherActivity.this, "Token saved/ Generated.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle error
-                        Toast.makeText(TeacherActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, e.getMessage());
-                    }
-                });
-    }
-    private String generateUniqueToken() {
-        // Implement your token generation logic here
-        return UUID.randomUUID().toString();
+                //Clear stack to prevent user from coming back after logout.
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        //Create the alert Dialog box
+        AlertDialog alertDialog = builder.create();
+
+        //Show the Alert box
+        alertDialog.show();
     }
 
 }

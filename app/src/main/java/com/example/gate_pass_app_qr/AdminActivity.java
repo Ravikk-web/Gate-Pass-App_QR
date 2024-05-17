@@ -1,5 +1,7 @@
 package com.example.gate_pass_app_qr;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -75,10 +77,7 @@ public class AdminActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(AdminActivity.this, "Logout successfull !", Toast.LENGTH_SHORT).show();
-                authProfile.signOut();
-                startActivity(new Intent(AdminActivity.this, MainActivity.class));
-                finish();
+                showLogoutDialog("Logout", "Would you like to Logout.");
             }
         });
 
@@ -131,6 +130,35 @@ public class AdminActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void showLogoutDialog(String title, String message) {
+        // Setup the Alert Builder
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(AdminActivity.this);
+        builder.setTitle(title.toUpperCase());
+        builder.setMessage(message);
+
+        //open the email app if user clicks/ taps continue button
+        builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                authProfile.signOut();
+                Toast.makeText(AdminActivity.this, "logout Successful !", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(AdminActivity.this, MainActivity.class);
+
+                //Clear stack to prevent user from coming back after logout.
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        //Create the alert Dialog box
+        AlertDialog alertDialog = builder.create();
+
+        //Show the Alert box
+        alertDialog.show();
     }
 
 }

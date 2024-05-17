@@ -1,8 +1,12 @@
 package com.example.gate_pass_app_qr;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -14,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -29,6 +34,7 @@ public class GenerateQRCodeActivity extends AppCompatActivity {
     private String encodedData;
     private QRGEncoder qrgEncoder;
     private Bitmap bitmap;
+    private static final String CHANNEL_ID = "swift_exit_channel_id";
     private static final String TAG = "GenerateQRCodeActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,8 @@ public class GenerateQRCodeActivity extends AppCompatActivity {
         dataView = findViewById(R.id.textView_data);
         encodedData = getIntent().getStringExtra("data");
         dataView.setText("TOKEN : "+encodedData);
+
+        sendNotification(encodedData);
 
         String data = encodedData;
 
@@ -79,5 +87,29 @@ public class GenerateQRCodeActivity extends AppCompatActivity {
 
         }
 
+    }
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Swift Exit Notification Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("This channel shows the status of the tokens/ passes.");
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void sendNotification(String tokenId) {
+        createNotificationChannel();
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_logo_gpa)
+                .setContentTitle("Token Generated")
+                .setContentText("Your Token has been Generated.\nToken: <<"+tokenId+">>")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, builder.build());
     }
 }

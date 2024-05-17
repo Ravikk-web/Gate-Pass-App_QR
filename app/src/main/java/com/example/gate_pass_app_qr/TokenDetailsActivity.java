@@ -229,7 +229,7 @@ public class TokenDetailsActivity extends AppCompatActivity {
                 .update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Toast.makeText(TokenDetailsActivity.this, "Token 'Approved' ", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(TokenDetailsActivity.this, "Token 'Approved' ", Toast.LENGTH_SHORT).show();
                         Log.w("TokenDetailsActivity", " 'tokenStatus' For TokenDetails table updated to 'approved'");
                     }
                 }).addOnFailureListener(new OnFailureListener() {

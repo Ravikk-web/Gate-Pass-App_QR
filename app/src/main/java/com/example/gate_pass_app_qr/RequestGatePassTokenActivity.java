@@ -1,8 +1,12 @@
 package com.example.gate_pass_app_qr;
 
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -50,6 +55,7 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
     static String parentEmail;
     private static String parentMobile;
     private FirebaseFirestore db;
+    private static final String CHANNEL_ID = "swift_exit_channel_id";
     Timestamp currentTimestamp = Timestamp.now();
     private ProgressBar progressBar;
 
@@ -211,6 +217,8 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
 
                             textViewShowStudentTokenStatus.setText(tokenStatus);
 
+                            sendNotification("Token is PENDING",studentReason);
+
                         }
                         Toast.makeText(RequestGatePassTokenActivity.this, "Token already Available for the User.", Toast.LENGTH_SHORT).show();
 
@@ -229,6 +237,10 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
 
     private void sendDataForQR(String token,String documentId) {
         String data = dataUtils.combineAndEncode(token, documentId);
+
+        //push Notification
+        sendNotification("Token already Available",data);
+
         Intent intent = new Intent(RequestGatePassTokenActivity.this,GenerateQRCodeActivity.class);
         intent.putExtra("data",data);
         RequestGatePassTokenActivity.this.startActivity(intent);
@@ -298,6 +310,7 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     //Notes is added
                     utility.showToast(RequestGatePassTokenActivity.this, "Token Details saved Successfully.");
+
                     progressBar.setVisibility(View.GONE);
                     finish();
                 } else {
@@ -309,6 +322,25 @@ public class RequestGatePassTokenActivity extends AppCompatActivity {
 
         //This Method saved another collection of the token details.
         progressBar.setVisibility(View.GONE);
+    }
+
+    private void sendNotification(String title, String body) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Swift Exit Notification Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("This channel shows the status of the tokens/ passes.");
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.logo_gpa_no_bg) // Your notification icon resource ID
+                .setContentTitle(title)
+                .setContentText(body)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(18, builder.build());
     }
 
 

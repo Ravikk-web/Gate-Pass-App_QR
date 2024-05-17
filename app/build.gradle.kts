@@ -24,15 +24,26 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding = true
     }
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+    buildToolsVersion = "34.0.0"
 }
 
 dependencies {
+
+    //Biometric Dependancy
+    implementation("androidx.biometric:biometric:1.1.0")
+
+    //Notification Dependancy
+    implementation("androidx.core:core:1.10.0")
 
     implementation ("com.squareup.picasso:picasso:2.8")
     // Dependency for FirebaseUI for Firestore
@@ -44,6 +55,7 @@ dependencies {
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")
     implementation("eu.livotov.labs.android:CAMView:2.0.1@aar") {setTransitive(true)}
+
 
     implementation(libs.appcompat)
     implementation(libs.material)
